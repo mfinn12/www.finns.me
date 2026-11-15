@@ -1,7 +1,8 @@
 ---
 import { site, socials } from '../data/site';
 
-const linkedin = socials.find((s) => s.label === 'LinkedIn')!;
+// The main button points to LinkedIn, or to the first social link if LinkedIn is removed.
+const primary = socials.find((s) => s.label === 'LinkedIn') ?? socials[0];
 const year = new Date().getFullYear();
 ---
 
@@ -9,24 +10,28 @@ const year = new Date().getFullYear();
   <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
     <h2 class="font-serif text-3xl font-bold tracking-tight sm:text-4xl">Let's talk.</h2>
     <p class="mt-4 max-w-xl text-lg text-stone-400">
-      Looking for help with B2B marketing strategy, product marketing or demand generation? The
-      best way to reach me is on LinkedIn.
+      Looking for help with B2B marketing strategy, product marketing or demand generation?
+      {primary && <> The best way to reach me is on {primary.label}.</>}
     </p>
-    <a
-      href={linkedin.href}
-      target="_blank"
-      rel="noopener"
-      class="mt-8 inline-block rounded-full bg-accent-soft px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-    >
-      Message me on LinkedIn
-    </a>
+    {
+      primary && (
+        <a
+          href={primary.href}
+          target="_blank"
+          rel="noopener"
+          class="mt-8 inline-block rounded-full bg-accent-soft px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+        >
+          Message me on {primary.label}
+        </a>
+      )
+    }
   </div>
 
   <footer class="border-t border-stone-800">
     <div
       class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-stone-400 sm:flex-row sm:items-center sm:justify-between sm:px-6"
     >
-      <p>&copy; {year} {site.name}</p>
+      <p>&copy; <span data-year>{year}</span> {site.name}</p>
       <ul class="flex flex-wrap gap-5">
         {
           socials.map((s) => (
@@ -41,3 +46,10 @@ const year = new Date().getFullYear();
     </div>
   </footer>
 </section>
+
+<script is:inline>
+  // The year above is set at build time; keep it current between deploys.
+  document.querySelectorAll('[data-year]').forEach((el) => {
+    el.textContent = String(new Date().getFullYear());
+  });
+</script>

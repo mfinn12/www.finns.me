@@ -7,6 +7,9 @@ const logos: Record<string, typeof faGithub> = {
   LinkedIn: faLinkedin,
   GitHub: faGithub,
 };
+
+// Static text for screen readers and search engines; the animated roles are hidden from them.
+const rolesText = site.roles.map((r) => r.replace(/\.$/, '')).join(', ') + '.';
 ---
 
 <section id="top" class="mx-auto max-w-6xl px-4 pt-20 pb-24 sm:px-6 sm:pt-28 sm:pb-32">
@@ -15,9 +18,14 @@ const logos: Record<string, typeof faGithub> = {
   </p>
   <h1 class="mt-5 font-serif text-4xl leading-tight font-bold tracking-tight sm:text-6xl">
     I'm Michael Finn,<br />
-    <span class="text-stone-500 dark:text-stone-400" data-roles={JSON.stringify(site.roles)}>
+    <span class="sr-only">{rolesText}</span>
+    <span
+      class="text-stone-500 dark:text-stone-400"
+      data-roles={JSON.stringify(site.roles)}
+      aria-hidden="true"
+    >
       <span data-role-text>{site.roles[0]}</span><span
-        class="ml-0.5 inline-block w-[3px] animate-pulse bg-current align-baseline"
+        class="ml-0.5 inline-block w-[3px] bg-current align-baseline motion-safe:animate-pulse"
         style="height:0.9em"
         aria-hidden="true"></span>
     </span>

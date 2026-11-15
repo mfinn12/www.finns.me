@@ -14,8 +14,10 @@ Personal site for Michael Finn, built with [Astro](https://astro.build) and Tail
 npm install       # first time only
 npm run dev       # local preview at http://localhost:4321
 npm run build     # build the site into dist/
-firebase deploy   # build and publish by hand (needs the Firebase CLI)
+npm run build && firebase deploy   # publish by hand (needs the Firebase CLI)
 ```
+
+`firebase deploy` uploads whatever is in `dist/`, so always build first. The GitHub workflows build before they deploy.
 
 ## Deploying
 

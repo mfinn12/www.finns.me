@@ -30,7 +30,6 @@ const links = [
     <details class="relative sm:hidden">
       <summary
         class="cursor-pointer list-none rounded-md px-2 py-1 text-sm font-medium [&::-webkit-details-marker]:hidden"
-        aria-label="Open menu"
       >
         Menu
       </summary>
@@ -52,8 +51,19 @@ const links = [
 </header>
 
 <script>
-  // Close the mobile menu after picking a link.
-  document.querySelectorAll<HTMLAnchorElement>('header details a').forEach((a) => {
-    a.addEventListener('click', () => a.closest('details')?.removeAttribute('open'));
-  });
+  // Close the mobile menu after picking a link, on Escape, or on a tap outside it.
+  const menu = document.querySelector<HTMLDetailsElement>('header details');
+  if (menu) {
+    const close = () => menu.removeAttribute('open');
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        close();
+        menu.querySelector('summary')?.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) close();
+    });
+  }
 </script>
