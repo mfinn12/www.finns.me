@@ -1,0 +1,108 @@
+---
+import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { site, socials } from '../data/site';
+
+// Brand logos shown in place of the link text (Font Awesome Free, CC BY 4.0).
+const logos: Record<string, typeof faGithub> = {
+  LinkedIn: faLinkedin,
+  GitHub: faGithub,
+};
+
+// Static text for screen readers and search engines; the animated roles are hidden from them.
+const rolesText = site.roles.map((r) => r.replace(/\.$/, '')).join(', ') + '.';
+---
+
+<section id="top" class="mx-auto max-w-6xl px-4 pt-20 pb-24 sm:px-6 sm:pt-28 sm:pb-32">
+  <p class="text-sm font-semibold tracking-widest text-accent uppercase dark:text-accent-soft">
+    {site.tagline}
+  </p>
+  <h1 class="mt-5 font-serif text-4xl leading-tight font-bold tracking-tight sm:text-6xl">
+    I'm Michael Finn,<br />
+    <span class="sr-only">{rolesText}</span>
+    <span
+      class="text-stone-500 dark:text-stone-400"
+      data-roles={JSON.stringify(site.roles)}
+      aria-hidden="true"
+    >
+      <span data-role-text>{site.roles[0]}</span><span
+        class="ml-0.5 inline-block w-[3px] bg-current align-baseline motion-safe:animate-pulse"
+        style="height:0.9em"
+        aria-hidden="true"></span>
+    </span>
+  </h1>
+  <p class="mt-8 max-w-2xl text-lg leading-relaxed text-stone-600 dark:text-stone-400">
+    I've spent over two decades helping technology companies grow by pairing deep technical
+    understanding with marketing that works.
+  </p>
+
+  <div class="mt-10 flex flex-wrap items-center gap-4">
+    <a
+      href="#portfolio"
+      class="rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 transition hover:bg-accent dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-accent-soft"
+    >
+      See my work
+    </a>
+    <ul class="flex items-center gap-2">
+      {
+        socials.map((s) => {
+          const logo = logos[s.label];
+          return (
+            <li>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener"
+                aria-label={s.label}
+                title={s.label}
+                class="flex size-11 items-center justify-center rounded-full text-stone-600 transition-colors hover:text-accent dark:text-stone-400 dark:hover:text-accent-soft"
+              >
+                {logo ? (
+                  <svg
+                    viewBox={`0 0 ${logo.icon[0]} ${logo.icon[1]}`}
+                    class="size-7"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d={String(logo.icon[4])} />
+                  </svg>
+                ) : (
+                  <span class="text-sm font-medium">{s.label}</span>
+                )}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  // Cycle through the roles with a typing effect (skipped for reduced motion).
+  const wrap = document.querySelector<HTMLElement>('[data-roles]');
+  const text = wrap?.querySelector<HTMLElement>('[data-role-text]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (wrap && text && !reduce) {
+    const roles: string[] = JSON.parse(wrap.dataset.roles ?? '[]');
+    let index = 0;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    (async () => {
+      while (true) {
+        await sleep(2200);
+        const current = roles[index];
+        for (let i = current.length; i >= 0; i--) {
+          text.textContent = current.slice(0, i);
+          await sleep(35);
+        }
+        index = (index + 1) % roles.length;
+        const next = roles[index];
+        for (let i = 1; i <= next.length; i++) {
+          text.textContent = next.slice(0, i);
+          await sleep(70);
+        }
+      }
+    })();
+  }
+</script>
